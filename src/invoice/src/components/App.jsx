@@ -122,6 +122,24 @@ function App() {
 
   const [isPaying, setIsPaying] = useState(false);
 
+  const invoicegpt = {
+    cuit: "30-12345678-9",
+    salePoint: "0001",
+    invoiceNumber: "00000001",
+    date: "2025-02-24",
+    client: {
+      name: "Juan Pérez",
+      cuit: "20-87654321-5",
+      address: "Av. Siempre Viva 742, Buenos Aires",
+      ivaCondition: "Responsable Inscripto",
+    },
+    items: [
+      { id: 1, description: "Notebook", quantity: 1, price: 150000, iva: 21 },
+      { id: 2, description: "Mouse Inalámbrico", quantity: 1, price: 5000, iva: 21 },
+    ],
+
+  };
+
   const componentRef = useRef();
   const handlePrint = () => {
     window.print();
@@ -174,6 +192,22 @@ function App() {
       alert('Place your phone in landscape mode for the best experience');
     }
   }, [width]);
+
+
+  const getTotal = () => {
+    return orderItems.reduce((acc, item) => acc + item.quantity * item.price, 0).toFixed(2);
+  };
+
+  const getIVA = () => {
+    return orderItems.reduce((acc, item) => acc + (item.quantity * item.price * 15) / 100, 0).toFixed(2);
+  };
+
+  const getTotalWithIVA = () => {
+    return (parseFloat(getTotal()) + parseFloat(getIVA())).toFixed(2);
+  };
+
+
+
 
   const searchUser = (codCus) => {
     const usersRow = customers.find((row) => row._id === codCus);
@@ -757,37 +791,85 @@ function App() {
             <div ref={componentRef} className="p-5">
               <Header handlePrint={handlePrint} />
 
-              <MainDetails codCus={codCus} name={name} address={address} />
+              <div className="container mt-4">
+      <div className="card border-dark">
+        <div className="card-header bg-dark text-white text-center"></div>
+        <div className="card-body">
+          
+        <div className="card-header text-black text-center">FACTURA A</div>
+          <div className="row">
+            <div className="col-md-6">
+              <p><strong>{userInfo.nameCon}</strong></p>
+              <p><strong>Razon Social:</strong> {userInfo.nameCon}</p>
+              <p><strong>Domicilio Comercial:</strong> {invoicegpt.client.address}</p>
+              <p><strong>Condición frente al IVA:</strong> {invoicegpt.client.ivaCondition}</p>
+            </div>
+            <div className="col-md-6 ">
+              <p><strong>FACTURA</strong></p>
+              <p><strong>Punto de Venta:</strong> {invoicegpt.salePoint}    
+              <strong>     Comp. Nro:</strong> {invoicegpt.invoiceNumber}</p>
+              <p><strong>Fecha de Emision:</strong> {invoicegpt.date}</p>
+              <p><strong>Cliente:</strong> {invoicegpt.client.name}</p>
+              <p><strong>CUIT:</strong> {invoicegpt.client.cuit}</p>
+            </div>
+          </div>
+                    <hr />
+            <div className="row">
+              <div className="col-md-6">
+                <p><strong>CUIT:</strong> {invoicegpt.cuit}</p>
+                <p><strong>Punto de Venta:</strong> {invoicegpt.salePoint}</p>
+                <p><strong>N° Factura:</strong> {invoicegpt.invoiceNumber}</p>
+                <p><strong>Fecha:</strong> {invoicegpt.date}</p>
+              </div>
+              <div className="col-md-6 text-md-end">
+                <p><strong>Cliente:</strong> {invoicegpt.client.name}</p>
+                <p><strong>CUIT:</strong> {invoicegpt.client.cuit}</p>
+                <p><strong>Dirección:</strong> {invoicegpt.client.address}</p>
+                <p><strong>Condición IVA:</strong> {invoicegpt.client.ivaCondition}</p>
+              </div>
+          </div>
+          <table className="table table-bordered mt-3">
+            <thead className="table-dark text-white">
+              <tr>
+                <th>#</th>
+                <th>Descripción</th>
+                <th className="text-end">Cantidad</th>
+                <th className="text-end">Precio</th>
+                <th className="text-end">IVA (%)</th>
+                <th className="text-end">Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              {orderItems.map((item, index) => (
+                <tr key={item.id}>
+                  <td>{index + 1}</td>
+                  <td>{item.description}</td>
+                  <td className="text-end">{item.quantity}</td>
+                  <td className="text-end">${item.price.toFixed(2)}</td>
+                  <td className="text-end">{15}%</td>
+                  <td className="text-end">${(item.quantity * item.price).toFixed(2)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div className="text-end">
 
-              <ClientDetails
-                clientName={clientName}
-                clientAddress={clientAddress}
-              />
 
-              <Dates invNum={invNum} invDat={invDat} dueDat={dueDat} />
+            {/* <p><strong>Subtotal:</strong> ${getTotal()}</p>
+            <p><strong>IVA:</strong> ${getIVA()}</p> */}
+            <h5><strong>Total:</strong> ${amountval}</h5>
+        <p><strong>Subtotal:</strong> ${getTotal()}</p>
+        <p><strong>IVA:</strong> ${getIVA()}</p>
+        <h5><strong>Total:</strong> ${getTotalWithIVA()}</h5>
 
-              <Table
-                desPro={desPro}
-                quantity={quantity}
-                price={price}
-                amount={amount}
-                orderItems={orderItems}
-                setList={setList}
-                total={total}
-                setTotal={setTotal}
-              />
 
-              <Notes notes={notes} />
+          </div>
+        </div>
+      </div>
+    </div>
 
-              <Footer
-                name={name}
-                address={address}
-                website={website}
-                email={email}
-                phone={phone}
-                bankAccount={bankAccount}
-                bankName={bankName}
-              />
+
+
             </div>
           </>
         )}

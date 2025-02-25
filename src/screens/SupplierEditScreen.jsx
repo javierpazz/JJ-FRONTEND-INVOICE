@@ -40,7 +40,7 @@ const reducer = (state, action) => {
       return state;
   }
 };
-export default function ProductEditScreen() {
+export default function SupplierEditScreen() {
   const navigate = useNavigate();
   const params = useParams(); // /supplier/:id
   const { id: supplierId } = params;

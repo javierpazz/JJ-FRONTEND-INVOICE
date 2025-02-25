@@ -5,6 +5,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import { toast } from 'react-toastify';
+import { AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai';
 import { Store } from '../Store';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
@@ -17,7 +18,7 @@ const reducer = (state, action) => {
     case 'FETCH_SUCCESS':
       return {
         ...state,
-        products: action.payload.products,
+        comprobantes: action.payload.comprobantes,
         page: action.payload.page,
         pages: action.payload.pages,
         loading: false,
@@ -52,12 +53,12 @@ const reducer = (state, action) => {
   }
 };
 
-export default function ProductListScreen() {
+export default function ComprobanteListScreen() {
   const [
     {
       loading,
       error,
-      products,
+      comprobantes,
       pages,
       loadingCreate,
       loadingDelete,
@@ -80,7 +81,7 @@ export default function ProductListScreen() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data } = await axios.get(`${API}/api/products/admin?page=${page} `, {
+        const { data } = await axios.get(`${API}/api/comprobantes/admin?page=${page} `, {
           headers: { Authorization: `Bearer ${userInfo.token}` },
         });
 
@@ -100,15 +101,15 @@ export default function ProductListScreen() {
       try {
         dispatch({ type: 'CREATE_REQUEST' });
         const { data } = await axios.post(
-          `${API}/api/products`,
+          `${API}/api/comprobantes`,
           {},
           {
             headers: { Authorization: `Bearer ${userInfo.token}` },
           }
         );
-        toast.success('product created successfully');
+        toast.success('comprobante created successfully');
         dispatch({ type: 'CREATE_SUCCESS' });
-        navigate(`/admin/product/${data.product._id}`);
+        navigate(`/admin/comprobante/${data.comprobante._id}`);
       } catch (err) {
         toast.error(getError(error));
         dispatch({
@@ -118,13 +119,13 @@ export default function ProductListScreen() {
     }
   };
 
-  const deleteHandler = async (product) => {
+  const deleteHandler = async (comprobante) => {
     if (window.confirm('Are you sure to delete?')) {
       try {
-        await axios.delete(`${API}/api/products/${product._id}`, {
+        await axios.delete(`${API}/api/comprobantes/${comprobante._id}`, {
           headers: { Authorization: `Bearer ${userInfo.token}` },
         });
-        toast.success('product deleted successfully');
+        toast.success('comprobante deleted successfully');
         dispatch({ type: 'DELETE_SUCCESS' });
       } catch (err) {
         toast.error(getError(error));
@@ -139,12 +140,12 @@ export default function ProductListScreen() {
     <div>
       <Row>
         <Col>
-          <h1>Products</h1>
+          <h1>Comprobantes</h1>
         </Col>
         <Col className="col text-end">
           <div>
             <Button type="button" onClick={createHandler}>
-              Create Product
+              Create Comprobante
             </Button>
           </div>
         </Col>
@@ -163,40 +164,36 @@ export default function ProductListScreen() {
             <thead>
               <tr>
                 <th>ID</th>
-                <th>NAME</th>
-                <th>PRICE</th>
-                <th>CATEGORY</th>
-                <th>BRAND</th>
-                <th>STOCK</th>
-                <th>STOCK MINIMO</th>
+                <th>TYPO COMPROBANTE</th>
+                <th>IMPUTA EN CUENTA HABER</th>
+                <th>CLAVE</th>
                 <th>ACTIONS</th>
               </tr>
             </thead>
             <tbody>
-              {products.map((product) => (
-                <tr key={product._id}>
-                  <td>{product._id}</td>
-                  <td>{product.title}</td>
-                  <td>{product.price}</td>
-                  <td>{product.category}</td>
-                  <td>{product.brand}</td>
-                  <td>{product.inStock}</td>
-                  <td>{product.minStock}</td>
+              {comprobantes.map((comprobante) => (
+                <tr key={comprobante._id}>
+                  <td>{comprobante.codCom}</td>
+                  <td>{comprobante.nameCom}</td>
+                  <td>{comprobante.isHaber == true ? 'HABER' : 'DEBE'}</td>
+                  <td>{comprobante.claCom}</td>
                   <td>
                     <Button
                       type="button"
-                      variant="light"
-                      onClick={() => navigate(`/admin/product/${product._id}`)}
+                      title="Edit"
+                      onClick={() =>
+                        navigate(`/admin/comprobante/${comprobante._id}`)
+                      }
                     >
-                      Edit
+                      <AiOutlineEdit className="text-blue-500 font-bold text-xl" />
                     </Button>
                     &nbsp;
                     <Button
                       type="button"
-                      variant="light"
-                      onClick={() => deleteHandler(product)}
+                      title="Delete"
+                      onClick={() => deleteHandler(comprobante)}
                     >
-                      Delete
+                      <AiOutlineDelete className="text-red-500 font-bold text-xl" />
                     </Button>
                   </td>
                 </tr>
@@ -208,7 +205,7 @@ export default function ProductListScreen() {
               <Link
                 className={x + 1 === Number(page) ? 'btn text-bold' : 'btn'}
                 key={x + 1}
-                to={`/admin/products?page=${x + 1}`}
+                to={`/admin/comprobantes?page=${x + 1}`}
               >
                 {x + 1}
               </Link>

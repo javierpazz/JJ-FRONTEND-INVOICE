@@ -40,10 +40,10 @@ const reducer = (state, action) => {
       return state;
   }
 };
-export default function CustomerEditScreen() {
+export default function ComprobanteEditScreen() {
   const navigate = useNavigate();
-  const params = useParams(); // /customer/:id
-  const { id: customerId } = params;
+  const params = useParams(); // /comprobante/:id
+  const { id: comprobanteId } = params;
 
   const { state } = useContext(Store);
   const { userInfo } = state;
@@ -53,25 +53,21 @@ export default function CustomerEditScreen() {
       error: '',
     });
 
-  const [codCus, setCodCus] = useState('');
-  const [nameCus, setName] = useState('');
-  const [emailCus, setEmail] = useState('');
-  const [domcomer, setDomcomer] = useState('');
-  const [cuit, setCuit] = useState('');
-  const [coniva, setConiva] = useState('');
+  const [codCom, setCodCom] = useState('');
+  const [nameCom, setNameCom] = useState('');
+  const [claCom, setClaCom] = useState('');
+  const [isHaber, setIsHaber] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         dispatch({ type: 'FETCH_REQUEST' });
-        const { data } = await axios.get(`${API}/api/customers/${customerId}`);
+        const { data } = await axios.get(`${API}/api/comprobantes/${comprobanteId}`);
         // console.log(data);
-        setCodCus(data.codCus);
-        setName(data.nameCus);
-        setEmail(data.emailCus);
-        setDomcomer(data.domcomer);
-        setCuit(data.cuit);
-        setConiva(data.coniva);
+        setCodCom(data.codCom);
+        setNameCom(data.nameCom);
+        setClaCom(data.claCom);
+        setIsHaber(data.isHaber);
         dispatch({ type: 'FETCH_SUCCESS' });
       } catch (err) {
         dispatch({
@@ -81,22 +77,20 @@ export default function CustomerEditScreen() {
       }
     };
     fetchData();
-  }, [customerId]);
+  }, [comprobanteId]);
 
   const submitHandler = async (e) => {
     e.preventDefault();
     try {
       dispatch({ type: 'UPDATE_REQUEST' });
       await axios.put(
-        `${API}/api/customers/${customerId}`,
+        `${API}/api/comprobantes/${comprobanteId}`,
         {
-          _id: customerId,
-          codCus,
-          nameCus,
-          emailCus,
-          domcomer,
-          cuit,
-          coniva,
+          _id: comprobanteId,
+          codCom,
+          nameCom,
+          isHaber,
+          claCom,
         },
         {
           headers: { Authorization: `Bearer ${userInfo.token}` },
@@ -105,8 +99,8 @@ export default function CustomerEditScreen() {
       dispatch({
         type: 'UPDATE_SUCCESS',
       });
-      toast.success('Customer updated successfully');
-      navigate('/admin/customers');
+      toast.success('Comprobante updated successfully');
+      navigate('/admin/comprobantes');
     } catch (err) {
       toast.error(getError(err));
       dispatch({ type: 'UPDATE_FAIL' });
@@ -116,9 +110,9 @@ export default function CustomerEditScreen() {
   return (
     <Container className="small-container">
       <Helmet>
-        <title>Edit Customer ${customerId}</title>
+        <title>Edit Comprobante ${comprobanteId}</title>
       </Helmet>
-      <h1>Edit Customer {customerId}</h1>
+      <h1>Edit Comprobante {comprobanteId}</h1>
 
       {loading ? (
         <LoadingBox></LoadingBox>
@@ -126,51 +120,36 @@ export default function CustomerEditScreen() {
         <MessageBox variant="danger">{error}</MessageBox>
       ) : (
         <Form onSubmit={submitHandler}>
-          <Form.Group className="mb-3" controlId="codCus">
-            <Form.Label>Code</Form.Label>
+          <Form.Group className="mb-3" controlId="name">
+            <Form.Label>Codigo Comprobante</Form.Label>
             <Form.Control
-              value={codCus}
-              onChange={(e) => setCodCus(e.target.value)}
+              value={codCom}
+              onChange={(e) => setCodCom(e.target.value)}
               required
             />
           </Form.Group>
           <Form.Group className="mb-3" controlId="name">
-            <Form.Label>Name</Form.Label>
+            <Form.Label>Tipo Comprobante</Form.Label>
             <Form.Control
-              value={nameCus}
-              onChange={(e) => setName(e.target.value)}
+              value={nameCom}
+              onChange={(e) => setNameCom(e.target.value)}
               required
             />
           </Form.Group>
-          <Form.Group className="mb-3" controlId="email">
-            <Form.Label>Domicilio Comercial</Form.Label>
+          <Form.Check
+            className="mb-3"
+            type="checkbox"
+            id="isHaber"
+            label="Imputa en Cuenta Haber"
+            checked={isHaber}
+            onChange={(e) => setIsHaber(e.target.checked)}
+          />
+
+          <Form.Group className="mb-3" controlId="name">
+            <Form.Label>Clave Comprobante</Form.Label>
             <Form.Control
-              value={domcomer}
-              onChange={(e) => setDomcomer(e.target.value)}
-              required
-            />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="email">
-            <Form.Label>Cuit</Form.Label>
-            <Form.Control
-              value={cuit}
-              onChange={(e) => setCuit(e.target.value)}
-              required
-            />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="email">
-            <Form.Label>Condicion frente al IVA</Form.Label>
-            <Form.Control
-              value={coniva}
-              onChange={(e) => setConiva(e.target.value)}
-              required
-            />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="email">
-            <Form.Label>Email</Form.Label>
-            <Form.Control
-              value={emailCus}
-              onChange={(e) => setEmail(e.target.value)}
+              value={claCom}
+              onChange={(e) => setClaCom(e.target.value)}
               required
             />
           </Form.Group>

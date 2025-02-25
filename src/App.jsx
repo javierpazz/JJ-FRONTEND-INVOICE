@@ -53,6 +53,8 @@ import ValueeListScreen from './screens/ValueeListScreen';
 import ValueeEditScreen from './screens/ValueeEditScreen';
 import ConfigurationListScreen from './screens/ConfigurationListScreen';
 import ConfigurationEditScreen from './screens/ConfigurationEditScreen';
+import ComprobanteListScreen from './screens/ComprobanteListScreen';
+import ComprobanteEditScreen from './screens/ComprobanteEditScreen';
 import InvoicesOrd from './invoice/src/InvoicesOrd';
 import Invoices from './invoice/src/Invoices';
 import InvoicesRec from './invoice/src/InvoicesRec';
@@ -85,6 +87,7 @@ function App() {
       try {
         const { data } = await axios.get(`${API}/api/products/categories`);
         setCategories(data);
+        // console.log(userInfo);
       } catch (err) {
         toast.error(getError(err));
       }
@@ -115,7 +118,10 @@ function App() {
                 <i className="fas fa-bars"></i>
               </Button> */}
 
-              <LinkContainer to="/">
+              <LinkContainer to="/salepoint">
+                <Navbar.Brand>{userInfo ? userInfo.salePoint : "Chose Sale Point"}</Navbar.Brand>
+              </LinkContainer>
+              <LinkContainer to="/salepoint">
                 <Navbar.Brand>{userInfo ? userInfo.nameCon : "Chose Sale Point"}</Navbar.Brand>
               </LinkContainer>
               <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -210,11 +216,20 @@ function App() {
                       <LinkContainer to="/admin/products">
                         <NavDropdown.Item>Products</NavDropdown.Item>
                       </LinkContainer>
+                      <LinkContainer to="/admin/customers">
+                        <NavDropdown.Item>Customers</NavDropdown.Item>
+                      </LinkContainer>
+                      <LinkContainer to="/admin/suppliers">
+                        <NavDropdown.Item>Suppliers</NavDropdown.Item>
+                      </LinkContainer>
                       <LinkContainer to="/admin/valuees">
                         <NavDropdown.Item>Values</NavDropdown.Item>
                       </LinkContainer>
                       <LinkContainer to="/admin/configurations">
                         <NavDropdown.Item>Configurations</NavDropdown.Item>
+                      </LinkContainer>
+                      <LinkContainer to="/admin/comprobantes">
+                        <NavDropdown.Item>Comprobantes</NavDropdown.Item>
                       </LinkContainer>
                       <LinkContainer to="/admin/support">
                         <NavDropdown.Item>Chat Support</NavDropdown.Item>
@@ -464,6 +479,14 @@ function App() {
                 }
               ></Route>
               <Route
+                path="/admin/comprobantes"
+                element={
+                  <AdminRoute>
+                    <ComprobanteListScreen />
+                  </AdminRoute>
+                }
+              ></Route>
+              <Route
                 path="/admin/support"
                 element={
                   <AdminRoute>
@@ -540,6 +563,14 @@ function App() {
                 element={
                   <AdminRoute>
                     <ConfigurationEditScreen />
+                  </AdminRoute>
+                }
+              ></Route>
+              <Route
+                path="/admin/comprobante/:id"
+                element={
+                  <AdminRoute>
+                    <ComprobanteEditScreen />
                   </AdminRoute>
                 }
               ></Route>

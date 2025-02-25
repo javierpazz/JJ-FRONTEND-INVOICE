@@ -163,8 +163,11 @@ export default function CustomerListScreen() {
           <table className="table">
             <thead>
               <tr>
-                <th>ID</th>
-                <th>NAME</th>
+                <th>CODIGO</th>
+                <th>NOMBRE COMERCIAL</th>
+                <th>DOMICILIO</th>
+                <th>CUIT</th>
+                <th>CONDICION FRENTE AL IVA</th>
                 <th>EMAIL</th>
                 <th>ACTIONS</th>
               </tr>
@@ -174,6 +177,9 @@ export default function CustomerListScreen() {
                 <tr key={customer._id}>
                   <td>{customer.codCus}</td>
                   <td>{customer.nameCus}</td>
+                  <td>{customer.domcomer}</td>
+                  <td>{customer.cuit}</td>
+                  <td>{customer.coniva}</td>
                   <td>{customer.emailCus}</td>
                   <td>
                     <Button

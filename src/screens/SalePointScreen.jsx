@@ -39,8 +39,10 @@ export default function SalePointScreen() {
   const { state, dispatch: ctxDispatch } = useContext(Store);
   const { userInfo } = state;
   const [name, setName] = useState("");
+  const [salePoint, setSalePoint] = useState("");
   const [codCon, setCodCon] = useState('');
-
+  const [configurationObj, setConfigurationObj] = useState({});
+  
   const [configus, setConfigus] = useState([]);
 
   useEffect(() => {
@@ -66,8 +68,10 @@ export default function SalePointScreen() {
 
   const searchProduct = (codCon) => {
     const configusR = configus.find((row) => row._id === codCon);
+    setConfigurationObj(configusR);
     setCodCon(configusR._id);
     setName(configusR.name);
+    setSalePoint(configusR.codCon);
   };
 
 
@@ -76,25 +80,25 @@ export default function SalePointScreen() {
   };
 
 
-
+  
   const submitHandler = async (e) => {
     e.preventDefault();
-    // console.log(data);
     userInfo.codCon = codCon;
+    userInfo.salePoint = salePoint;
     userInfo.nameCon = name;
-    console.log(userInfo);
+    userInfo.configurationObj = configurationObj
     localStorage.setItem('userInfo', JSON.stringify(userInfo));
     navigate('/');
   };
-
+  
   // useEffect(() => {
   //   if (userInfo) {
-  //     navigate(redirect);
-  //   }
-  // }, [navigate, redirect, userInfo]);
-
-  return (
-    <Container className="small-container">
+    //     navigate(redirect);
+    //   }
+    // }, [navigate, redirect, userInfo]);
+    
+    return (
+      <Container className="small-container">
       <Helmet>
         <title>Sale Point</title>
       </Helmet>
@@ -108,7 +112,7 @@ export default function SalePointScreen() {
                       >
                         {configu.map((elemento) => (
                           <option key={elemento._id} value={elemento._id}>
-                            {elemento.name}
+                            {elemento.codCon+"-  -"+elemento.name }
                           </option>
                         ))}
             </Form.Select>
